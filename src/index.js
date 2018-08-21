@@ -3,7 +3,7 @@ import { render } from "react-dom";
 import { ApolloProvider } from "react-apollo";
 import { unregister } from './registerServiceWorker';
 import ApolloClient from "apollo-boost";
-import { AddTodo } from './components';
+import { AddTodo, ToDos } from './components';
 
 const client = new ApolloClient({
     // uri: "https://w5xlvm3vzz.lp.gql.zone/graphql"
@@ -24,7 +24,8 @@ class App extends React.Component {
             <ApolloProvider client={client}>
                 <div>
                     <h2>Apollo Mutations 🚀</h2>
-
+                    <AddTodo />
+                    <ToDos />
                 </div>
             </ApolloProvider>
         )

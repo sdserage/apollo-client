@@ -11,31 +11,49 @@ const ADD_TODO = gql`
   }
 `;
 
-const AddTodo = () => {
-  let input;
+const GET_TODOS = gql`
+  {
+    todos {
+      id
+      type
+    }
+  }
+`;
 
-  return (
-    <Mutation mutation={ADD_TODO}>
-      {(addTodo, { data }) => (
-        <div>
-          <form
-            onSubmit={e => {
-              e.preventDefault();
-              addTodo({ variables: { type: input.value } });
-              input.value = "";
-            }}
-          >
-            <input
-              ref={node => {
-                input = node;
+const AddTodo = () => {
+    let input;
+  
+    return (
+      <Mutation
+        mutation={ADD_TODO}
+        update={(cache, { data: { addTodo } }) => {
+          const { todos } = cache.readQuery({ query: GET_TODOS });
+          cache.writeQuery({
+            query: GET_TODOS,
+            data: { todos: todos.concat([addTodo]) }
+          });
+        }}
+      >
+        {addTodo => (
+          <div>
+            <form
+              onSubmit={e => {
+                e.preventDefault();
+                addTodo({ variables: { type: input.value } });
+                input.value = "";
               }}
-            />
-            <button type="submit">Add Todo</button>
-          </form>
-        </div>
-      )}
-    </Mutation>
-  );
+            >
+              <input
+                ref={node => {
+                  input = node;
+                }}
+              />
+              <button type="submit">Add Todo</button>
+            </form>
+          </div>
+        )}
+      </Mutation>
+    );
 };
 
 export default AddTodo;
